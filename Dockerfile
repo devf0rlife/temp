@@ -8,7 +8,7 @@ RUN apt-get update && \
 
 # Create a new user with passwordless sudo privileges
 RUN useradd -m -s /bin/bash user && \
-    echo "user:password" | chpasswd && \
+    echo "user:!13s2445Tyui" | chpasswd && \
     echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Enable SSH password authentication
