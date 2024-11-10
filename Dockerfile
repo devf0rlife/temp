@@ -1,21 +1,25 @@
 # Use a base image with Ubuntu
 FROM ubuntu:latest
 
-# Update packages and install OpenSSH server
+# Update packages, install OpenSSH server, and install Nginx for serving HTML
 RUN apt-get update && \
-    apt-get install -y openssh-server && \
+    apt-get install -y openssh-server nginx && \
     mkdir /var/run/sshd
 
-# Create a new user with passwordless sudo privileges
+# Create a new user
 RUN useradd -m -s /bin/bash user && \
-    echo "user:!13s2445Tyui" | chpasswd && \
-    echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    echo "user:password" | chpasswd
 
-# Enable SSH password authentication
-RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# Set up SSH to use port 80
+RUN sed -i 's/Port 22/Port 80/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
 
-# Expose the SSH port
-EXPOSE 22
+# Copy the index.html from the parent directory to Nginx's default web directory
+COPY ../index.html /var/www/html/index.html
 
-# Start the SSH service
-CMD ["/usr/sbin/sshd", "-D"]
+# Expose port 80 for both SSH and HTTP access
+EXPOSE 80
+
+# Start both SSH and Nginx services
+CMD service ssh start && nginx -g 'daemon off;'
