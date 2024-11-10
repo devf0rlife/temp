@@ -16,7 +16,7 @@ RUN sed -i 's/Port 22/Port 2222/' /etc/ssh/sshd_config && \
     sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
 
 # Copy the index.html from the parent directory to Nginx's default web directory
-COPY ../index.html /var/www/html/index.html
+COPY index.html /var/www/html/index.html
 
 # Expose port 8080 for HTTP and 2222 for SSH access
 EXPOSE 8080 2222
